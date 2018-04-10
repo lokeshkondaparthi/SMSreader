@@ -31,16 +31,14 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
         mTts = new TextToSpeech(this,
                 this  // OnInitListener
         );
-        mTts.setSpeechRate(0.5f);
-        Log.v(TAG, "oncreate_service");
-        str = "turn left please ";
         super.onCreate();
     }
 
 
     @Override
     public void onDestroy() {
-        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
+      //  if(mAudioManager != null)
+       // mAudioManager.setRingerMode(AudioManager.RINGER_MODE_NORMAL);
         // TODO Auto-generated method stub
         if (mTts != null) {
             mTts.stop();
@@ -52,18 +50,19 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
     @Override
     public void onStart(Intent intent, int startId) {
 
-        mAudioManager = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
-        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);
-        sayHello(str);
+  /*      mAudioManager = (AudioManager) getBaseContext().getSystemService(Context.AUDIO_SERVICE);
+        mAudioManager.setRingerMode(AudioManager.RINGER_MODE_SILENT);*/
 
         Log.v(TAG, "onstart_service");
+        sayHello();
         super.onStart(intent, startId);
     }
 
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sayHello(intent.getStringExtra("text"));
+        str = intent.getStringExtra("text");
+        sayHello();
         return START_NOT_STICKY;
     }
 
@@ -77,16 +76,15 @@ public class TTSService extends Service implements TextToSpeech.OnInitListener {
                 Log.v(TAG, "Language is not available.");
             } else {
 
-                sayHello(str);
-
+                sayHello();
             }
         } else {
             Log.v(TAG, "Could not initialize TextToSpeech.");
         }
     }
 
-    private void sayHello(String str) {
-        mTts.speak(str,
+    private void sayHello() {
+        mTts.speak(this.str,
                 TextToSpeech.QUEUE_FLUSH,
                 null);
     }
